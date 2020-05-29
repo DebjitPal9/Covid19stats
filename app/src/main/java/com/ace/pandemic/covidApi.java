@@ -1,53 +1,69 @@
 package com.ace.pandemic;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.text.LoginFilter;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class covidApi extends Thread
 {
     public static String totalCases="",newCases="",totalRecovered="",totalDeaths="",newDeaths="";
+    //textView Ref
+    static TextView tDeath;
 
-       public void run()
-       {
+    private static String url="https://disease.sh/v2/all";
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url("https://disease.sh/v2/all").build();
-        try {
-            Response response = client.newCall(request).execute();
+    covidApi(Context ct)
+    {
+        final StringRequest request = new StringRequest(url, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("thiss",response);
+                try
+                {
+                    //extracting data from JSON format
+                    JSONObject object=new JSONObject(response);
+                    totalCases = object.getString("cases");
+                    newCases = object.getString("todayCases");
+                    totalRecovered = object.getString("recovered");
+                    totalDeaths = object.getString("deaths");
+                    newDeaths = object.getString("todayDeaths");
 
-            String responseBody = "";
-            responseBody = response.body().string();
+                    //displaying data
+                    tDeath.setText("Total Deaths:  "+totalDeaths);
 
-            JSONObject object = new JSONObject(responseBody);
-            //now we fetch the data from the ob j
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
 
-            totalCases = object.getString("cases");
-            newCases = object.getString("todayCases");
-            totalRecovered = object.getString("recovered");
-            totalDeaths = object.getString("deaths");
-            newDeaths = object.getString("todayDeaths");
-        }
-        catch(IOException e)
-        {
-            Log.i("this","IOException");
-        }
-        catch (JSONException e)
-        {
-            Log.i("this","JSONException");
-        }
-        catch (Exception e)
-        {
-            Log.i("thiss","Exception");
-            Log.i("thiss",covidApi.totalDeaths);
-        }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("thiss","failure to retrieve data");
+
+            }
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(ct);
+        queue.add(request);
+    }
+    static void setPlainTextRef(TextView tDeath1)
+    {
+        tDeath=tDeath1;
     }
 
 }
