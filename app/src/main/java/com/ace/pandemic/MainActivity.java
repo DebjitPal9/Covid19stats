@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -14,9 +13,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView tDeath2 = (TextView) findViewById(R.id.textView2);
+        //making textView objects
+        TextView tDeath2,nCases2,nDeath2,tRecover2, tCases2;
+        tDeath2 = (TextView) findViewById(R.id.tDeath);
+        nCases2 = (TextView) findViewById(R.id.nCases);
+        nDeath2 = (TextView) findViewById(R.id.nDeath);
+        tRecover2 = (TextView) findViewById(R.id.tRecover);
+        tCases2 = (TextView) findViewById(R.id.tCases);
 
-        covidApi.setPlainTextRef(tDeath2);
+        covidApi.setPlainTextRef(tDeath2,nCases2,nDeath2,tRecover2,tCases2);
 
         covidApi obj=new covidApi(this);
     }
