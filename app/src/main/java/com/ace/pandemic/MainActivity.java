@@ -2,12 +2,16 @@ package com.ace.pandemic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private static String url="https://disease.sh/v2/all";
+
+    public static final String key="WHATGOESYOURBAPUS";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -15,14 +19,32 @@ public class MainActivity extends AppCompatActivity {
 
         //making textView objects
         TextView tDeath2,nCases2,nDeath2,tRecover2, tCases2;
-        tDeath2 = (TextView) findViewById(R.id.tDeath);
-        nCases2 = (TextView) findViewById(R.id.nCases);
-        nDeath2 = (TextView) findViewById(R.id.nDeath);
-        tRecover2 = (TextView) findViewById(R.id.tRecover);
-        tCases2 = (TextView) findViewById(R.id.tCases);
+        tDeath2 = findViewById(R.id.tDeath);
+        nCases2 = findViewById(R.id.nCases);
+        nDeath2 = findViewById(R.id.nDeath);
+        tRecover2 = findViewById(R.id.tRecover);
+        tCases2 = findViewById(R.id.tCases);
 
         covidApi.setPlainTextRef(tDeath2,nCases2,nDeath2,tRecover2,tCases2);
 
-        covidApi obj=new covidApi(this);
+        new covidApi(this);
+
+    }
+    public void  retryNet(View view)
+    {
+        new covidApi(this);
+    }
+    public void getGraph(View view)
+    {
+        //creating intent object
+        Intent intent =new Intent(this,graph_activity.class);
+        //message to be passed
+        String message="A temporary Message";
+
+        //My bapu doesn't know
+        intent.putExtra(key,message);
+
+        //starting new Activity
+        startActivity(intent);
     }
 }
