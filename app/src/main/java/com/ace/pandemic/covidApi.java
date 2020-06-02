@@ -12,9 +12,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.kosalgeek.android.caching.FileCacher;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -27,14 +30,23 @@ public class covidApi extends Thread
 
     private static String url="https://disease.sh/v2/all";
 
-    covidApi(final Context ct)//ct -> object of MainActivity
+    covidApi(final Context ct, final FileCacher<String> stringCacher)//ct -> object of MainActivity
     {
+
         final StringRequest request = new StringRequest(url, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.i("thiss",response);
                 try
                 {
+                    try {
+                        stringCacher.clearCache();
+                        stringCacher.writeCache(response);
+                    }
+                    catch (IOException exp)
+                    {
+                        Log.i("thiss","Error in cache writing");
+                    }
                     //extracting data from JSON format
                     JSONObject object=new JSONObject(response);
 
@@ -44,7 +56,6 @@ public class covidApi extends Thread
                     totalDeaths = object.getString("deaths");
                     newDeaths = object.getString("todayDeaths");
 
-                    Log.i("thiss",totalCases);
 
                     //displaying data
                     tDeath.setText("Total Deaths : "+totalDeaths);
@@ -68,8 +79,47 @@ public class covidApi extends Thread
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("thiss","failure to retrieve data");
                 Toast.makeText(ct,"No Internet Connection", LENGTH_SHORT).show();
+                if(stringCacher.hasCache())
+                {
+                    try
+                    {
+                        String chacheResponse = stringCacher.readCache();
+
+                        //extracting data from JSON format
+                        JSONObject object=new JSONObject(chacheResponse);
+
+                        totalCases = object.getString("cases");
+                        newCases = object.getString("todayCases");
+                        totalRecovered = object.getString("recovered");
+                        totalDeaths = object.getString("deaths");
+                        newDeaths = object.getString("todayDeaths");
+
+
+                        //displaying data
+                        tDeath.setText("Total Deaths : "+totalDeaths);
+
+                        tRecover.setText("Total Recovered : "+totalRecovered);
+
+                        nCases.setText("New Cases : "+newCases);
+
+                        tCases.setText("Total Cases : "+totalCases);
+
+                        nDeath.setText("New Deaths : "+newDeaths);
+
+
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+                Log.i("thiss","failure to retrieve data");
 
             }
         });
