@@ -36,10 +36,11 @@ public class covidApi extends Thread
         final StringRequest request = new StringRequest(url, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("thiss",response);
+
                 try
                 {
                     try {
+                        //adding new cache
                         stringCacher.clearCache();
                         stringCacher.writeCache(response);
                     }
@@ -79,9 +80,11 @@ public class covidApi extends Thread
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                //No internet Toast mandatory
                 Toast.makeText(ct,"No Internet Connection", LENGTH_SHORT).show();
                 if(stringCacher.hasCache())
                 {
+                    //setting cache
                     try
                     {
                         String chacheResponse = stringCacher.readCache();
@@ -119,7 +122,7 @@ public class covidApi extends Thread
                     }
 
                 }
-                Log.i("thiss","failure to retrieve data");
+                Log.i("thiss","failure to retrieve data covid api");
 
             }
         });
@@ -137,5 +140,7 @@ public class covidApi extends Thread
         tCases = tCases1;
 
     }
+
+
 
 }

@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String key="WHATGOESYOURBAPUS";
 
+    //cacher object
     FileCacher<String> stringCacher=new FileCacher<>(MainActivity.this,"sometext.txt");
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
     }
     public void getGraph(View view)
     {
+
         //creating intent object
         Intent intent =new Intent(this,graph_activity.class);
         //message to be passed
-        String message="A temporary Message";
 
         //My bapu doesn't know
-        intent.putExtra(key,message);
+        intent.putExtra(key,covidApi.totalCases);
 
         //starting new Activity
         startActivity(intent);
