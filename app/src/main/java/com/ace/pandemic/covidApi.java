@@ -30,7 +30,7 @@ public class covidApi extends Thread
 
     private static String url="https://disease.sh/v2/all";
 
-    covidApi(final Context ct, final FileCacher<String> stringCacher)//ct -> object of MainActivity
+    covidApi(final Context ct, final FileCacher<String> stringCacher)//ct -> object of MainActivity(Context)
     {
 
         final StringRequest request = new StringRequest(url, new com.android.volley.Response.Listener<String>() {
@@ -43,7 +43,7 @@ public class covidApi extends Thread
                         //adding new cache
                         stringCacher.clearCache();
                         stringCacher.writeCache(response);
-                    }
+                }
                     catch (IOException exp)
                     {
                         Log.i("thiss","Error in cache writing");
@@ -82,6 +82,7 @@ public class covidApi extends Thread
             public void onErrorResponse(VolleyError error) {
                 //No internet Toast mandatory
                 Toast.makeText(ct,"No Internet Connection", LENGTH_SHORT).show();
+                Log.i("thiss","reacing here");
                 if(stringCacher.hasCache())
                 {
                     //setting cache
@@ -140,7 +141,36 @@ public class covidApi extends Thread
         tCases = tCases1;
 
     }
+    static void setIntroCases(final TextView textView,final Context ct)
+    {
+        final StringRequest request =new StringRequest(url,new com.android.volley.Response.Listener<String>()
+        {
+            @Override
+            public void onResponse(String response)
+            {
+                try
+                {
+                    JSONObject object=new JSONObject(response);
+                    //writing cache for introscreen
 
 
+                    textView.setText("Total Cases : "+object.getString("cases"));
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
 
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.i("thiss","Failure to retrieve data for intro");
+                Toast.makeText(ct,"No Internet Connection", LENGTH_SHORT).show();
+                textView.setText("Total Cases : "+covidApi.totalCases);
+            }
+        });
+        RequestQueue queue = Volley.newRequestQueue(ct);
+        queue.add(request);
+    }
 }
