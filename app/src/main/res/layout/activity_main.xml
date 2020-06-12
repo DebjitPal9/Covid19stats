@@ -98,4 +98,17 @@
         app:layout_constraintStart_toEndOf="@+id/retry"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.825" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="253dp"
+        android:layout_height="30dp"
+        android:text="World Statistics"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/tDeath"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.601"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.621" />
 </androidx.constraintlayout.widget.ConstraintLayout>
